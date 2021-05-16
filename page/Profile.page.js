@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { View, StyleSheet, TextInput, Text, TouchableOpacity } from 'react-native'
 import ListContent from '../components/ListContent.component'
 import ListView from '../components/ListView.component'
+import { connect } from 'react-redux';
 
 class Profile extends Component {
     state = {
@@ -15,6 +16,7 @@ class Profile extends Component {
     }
 
     login = (text) => {
+        console.log("waweo ",this.props.expenses.current)
         alert("Loginkan " + text + "dari home " + this.state.itemId + ' | ' + this.state.otherParam)
     }
 
@@ -39,14 +41,19 @@ class Profile extends Component {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.container3}>
-                    <ListView names={[]}></ListView>
+                    <ListView names={this.props.expenses.current[0]}></ListView>
                 </View>
             </View>
         )
     }
 }
 
-export default Profile
+const mapStateToProps = (state) => {
+    const { expenses } = state
+    return { expenses }
+};
+
+export default connect(mapStateToProps)(Profile);
 
 const styles = StyleSheet.create({
     submitButton: {

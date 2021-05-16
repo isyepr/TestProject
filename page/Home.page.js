@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { View, StyleSheet, TextInput, Text, TouchableOpacity, Button } from 'react-native'
 import ListContent from '../components/ListContent.component'
 import ListView from '../components/ListView.component'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { addExpenses, addToken } from '../redux/action/generalAction';
 
 class Home extends Component {
   state = {
@@ -15,27 +18,30 @@ class Home extends Component {
   }
 
   login = (text) => {
-    alert("Loginkan " + text)
+    this.props.addToken('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjExNDYyNTgsImRhdGEiOnsicm9sZSI6ImFkbWluIiwidXNlcl9pZCI6IjYwOWZiNmFmZDYwZTMzNDQ1ODZjZjk0NiJ9LCJpYXQiOjE2MjExNDI2NTh9.0Ghs3syMVVvgrXagMrjhqfXmWf2VGqNWVP8Y9ucpJPE')
+    alert("Loginkan " + this.props.expenses.token)
+    this.componentDidMount()
   }
 
   componentDidMount = () => {
     fetch('http://10.0.2.2:3000/api/user', {
       method: 'GET',
       headers: new Headers({
-        'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjExNDA3MTAsImRhdGEiOnsicm9sZSI6ImFkbWluIiwidXNlcl9pZCI6IjYwOWZiNmFmZDYwZTMzNDQ1ODZjZjk0NiJ9LCJpYXQiOjE2MjExMzcxMTB9.bCpq3H6E-_QsKMxNAXrBawUtYeEel64wPYWG3qQ-K7o'
+        'token': this.props.expenses.token
       }),
     })
       .then((response) => response.json())
       .then((responseJson) => {
-
-        // console.log("fetch ", responseJson.data);
+        console.log("fetch ", responseJson);
+        console.log("fetch data", responseJson.data);
+        this.props.addExpenses(responseJson.data[0].expenses)
         this.setState({
           total: responseJson.data[0].total_expense,
           names: responseJson.data[0].expenses
         })
       })
       .catch((error) => {
-        console.log("error ", error);
+        console.log("errorz ", error);
       });
   }
 
@@ -78,7 +84,19 @@ class Home extends Component {
   }
 }
 
-export default Home
+const mapStateToProps = (state) => {
+  const { expenses } = state
+  return { expenses }
+};
+
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    addExpenses,
+    addToken,
+  }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
 
 const styles = StyleSheet.create({
   submitButton: {

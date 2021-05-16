@@ -6,7 +6,7 @@ const ListView = (props) => {
     const alertItemName = (item) => {
         alert(item.name)
     }
-    console.log("propss", props)
+    console.log("propss", props.names)
     return (
         <ScrollView>
             <View>
